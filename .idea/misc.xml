@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/drawable/ic_message.xml" value="0.1" />
+        <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/activity_main.xml" value="0.152" />
+        <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/activity_prices.xml" value="0.1" />
+        <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/one_share_holder.xml" value="0.4" />
       </map>
     </option>
   </component>

@@ -6,6 +6,7 @@ class AllStocks(
     @SerializedName("stocks")
     var stocks: Stocks
 
+
 //    var stocks: List<Stocks>
 //    если сделать так то он ругается
 //    E/tag: failure: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_ARRAY but was BEGIN_OBJECT at line 1 column 12 path $.stocks

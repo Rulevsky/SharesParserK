@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SharesParserK</string>
+    <string name="channel_name">price_notification</string>
+    <string name="channel_description">description price channel</string>
 </resources>
