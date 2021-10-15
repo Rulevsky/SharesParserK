@@ -7,9 +7,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 
 interface RetrofitServices {
-
     @GET("https://api.torn.com/torn/?selections=stocks&key=uzmYj2niVZCDwZZZ")
-  fun getSharesList(): Call<AllStocks>
-    //для теста
-//    fun getSharesList(): AllStocks?
+    fun getSharesList(): Call<AllStocks>
+
 }

@@ -7,19 +7,19 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "stocks_price_table")
 data class Stock (
-    @PrimaryKey(autoGenerate = true)
-    var stockdbId: Long = 0L,
+    @PrimaryKey(autoGenerate = false)
+    var stock_id: Int,
 
     @ColumnInfo(name = "acronym")
     var acronym: String,
 
     @ColumnInfo(name = "name")
-    var name:String,
+    var name: String,
 
     @ColumnInfo(name = "currentPrice")
-    var currentPrice: Long,
+    var currentPrice: Double,
 
-    @ColumnInfo(name = "stock_id")
-    var stock_id: Int
+//    @ColumnInfo(name = "stock_id")
+//    var stock_id: Int
 )
 

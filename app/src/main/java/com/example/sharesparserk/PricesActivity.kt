@@ -1,19 +1,27 @@
 package com.example.sharesparserk
 
-import android.app.Application
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.widget.EditText
+import androidx.core.view.get
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharesparserk.Adapter.PriceRecAdapter
 import com.example.sharesparserk.Common.Common
 import com.example.sharesparserk.Interface.RetrofitServices
+import com.example.sharesparserk.database.SettingsDatabase
+import com.example.sharesparserk.database.Stock
 import com.example.sharesparserk.database.StocksDatabase
-import com.example.sharesparserk.database.StocksDatabaseDao
 import com.example.sharesparserk.model.AllStocks
 import com.example.sharesparserk.model.OneStockPosition
+import com.example.sharesparserk.model.Stocks
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,14 +32,10 @@ class PricesActivity : AppCompatActivity() {
     lateinit var mService: RetrofitServices
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prices)
-        Log.e("Pr", "price activity oncreated")
-
-//         завести рум
-        var stocksDatabase = StocksDatabase.getInstance(this)
-
 
 
 
@@ -42,10 +46,28 @@ class PricesActivity : AppCompatActivity() {
                 call: Call<AllStocks>,
                 response: Response<AllStocks>
             ) {
-                GetData.stocksToList(response.body()!!)
                 var stocksData = response.body()!!
                 Log.e("tag", "responsebody zapisalsa: " + stocksData.stocks.x1.toString())
-                dataSet = mutableListOf(stocksData.stocks.x1, stocksData.stocks.x2, stocksData.stocks.x3)
+                dataSet =
+                    mutableListOf(
+                        stocksData.stocks.x1, stocksData.stocks.x2, stocksData.stocks.x3,
+                        stocksData.stocks.x4, stocksData.stocks.x5, stocksData.stocks.x6,
+                        stocksData.stocks.x7, stocksData.stocks.x8, stocksData.stocks.x9,
+                        stocksData.stocks.x10, stocksData.stocks.x11, stocksData.stocks.x12,
+                        stocksData.stocks.x13, stocksData.stocks.x14, stocksData.stocks.x15,
+                        stocksData.stocks.x16, stocksData.stocks.x17, stocksData.stocks.x18,
+                        stocksData.stocks.x19, stocksData.stocks.x20, stocksData.stocks.x21,
+                        stocksData.stocks.x22, stocksData.stocks.x23, stocksData.stocks.x24,
+                        stocksData.stocks.x25, stocksData.stocks.x26, stocksData.stocks.x27,
+                        stocksData.stocks.x28, stocksData.stocks.x29, stocksData.stocks.x30,
+                        stocksData.stocks.x31, stocksData.stocks.x32
+                    )
+
+                lifecycleScope.launch(Dispatchers.IO) {
+                    insertStockToDb(stocksData.stocks)
+                }
+
+
                 recyclerView = findViewById(R.id.priceRecyclerView)
                 recyclerView.layoutManager = LinearLayoutManager(applicationContext)
                 recyclerView.adapter = PriceRecAdapter(dataSet)
@@ -56,55 +78,35 @@ class PricesActivity : AppCompatActivity() {
             }
         })
 
+    }
 
+    private suspend fun insertStockToDb(stocks: Stocks) {
 
+        var stock: Stock = Stock(
+            stocks.x16.stockId,
+            stocks.x16.acronym,
+            stocks.x16.name,
+            stocks.x16.currentPrice,
 
+        )
+        var stocksDatabase = StocksDatabase.getInstance(this).stocksDatabaseDao
+
+        if (stocksDatabase.get(16) == null){
+            stocksDatabase.insert(stock)
+        } else {
+            stocksDatabase.update(stock)
+        }
+        stocksDatabase.get(0)
     }
 
 
-    fun getDatabase(){
+    fun getDatabase() {
 
+        lifecycleScope.launch {
 
+        }
     }
 
-//    fun initRecyclerView() {
-//        Log.e("pr", "init rec view")
-//        var dataset: MutableList<OneStockPosition> = mutableListOf()
-//        dataset = getDataSet()
-//        Log.e("pr", "init recycler: " + dataset.size.toString())
-//        var adapter = PriceRecAdapter(dataset)
-//        recyclerView = findViewById(R.id.priceRecyclerView)
-//        recyclerView.layoutManager = LinearLayoutManager(this)
-//        recyclerView.adapter = adapter
-//
-//    }
 
-//    fun getDataSet(): MutableList<OneStockPosition> {
-//        var dataset: MutableList<OneStockPosition> = mutableListOf()
-//        var stockData: AllStocks? = GetData.getAllSharesList()
-//        dataset = stockData?.let { GetData.stocksToList(it) }!!
-//        return dataset
-//    }
-//
-//    private var job: Job = Job()
-//    private var scope =
-//        CoroutineScope(Dispatchers.Main + job) // creating the scope to run the coroutine. It consists of Dispatchers.Main (coroutine will run in the Main context) and job to handle the cancellation of the coroutine.
-//
-//    fun runInParallel() {
-//        scope.launch { // launch a coroutine
-//            // runs in parallel
-//            val deferredList = listOf(
-//                scope.async { getDataSet() }
-//            )
-//            delay(1000L)
-//            deferredList.awaitAll() // wait for all data to be processed without blocking the UI thread
-//            initRecyclerView()
-//            // do some stuff after data has been processed, for example update UI
-//        }
-//    }
-//
-//
-//    fun cancel() {
-//        job.cancel() // invoke it to cancel the job when you don't need it to execute. For example when UI changed and you don't need to process data
-//    }
 }
+

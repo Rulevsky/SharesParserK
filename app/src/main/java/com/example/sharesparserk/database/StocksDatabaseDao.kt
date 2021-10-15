@@ -14,4 +14,6 @@ interface StocksDatabaseDao {
     fun update(stock: Stock)
     @Query("SELECT * from stocks_price_table WHERE stock_id = :key")
     fun get(key: Int):Stock?
+    @Query("DELETE FROM stocks_price_table")
+    fun clear()
 }
