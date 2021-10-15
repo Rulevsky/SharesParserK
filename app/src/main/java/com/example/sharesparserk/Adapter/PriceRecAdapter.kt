@@ -52,7 +52,7 @@ class PriceRecAdapter(private val dataSet: MutableList<OneStockPosition>): Recyc
                 override fun afterTextChanged(s: Editable?) {
                     view
                     GlobalScope.launch(Dispatchers.IO) {
-                        
+
                     }
                 }
             })
