@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity(tableName = "stocks_price_table")
-data class Stock (
+data class Stock(
     @PrimaryKey(autoGenerate = false)
     var stock_id: Int,
 

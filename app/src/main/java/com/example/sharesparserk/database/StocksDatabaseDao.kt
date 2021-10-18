@@ -1,5 +1,6 @@
 package com.example.sharesparserk.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -16,4 +17,6 @@ interface StocksDatabaseDao {
     fun get(key: Int):Stock?
     @Query("DELETE FROM stocks_price_table")
     fun clear()
+    @Query("SELECT * FROM stocks_price_table ORDER BY stock_id DESC")
+    fun getAllStocks():LiveData<MutableList<Stock>>
 }

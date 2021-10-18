@@ -16,9 +16,8 @@ abstract class StocksDatabase : RoomDatabase() {
         @Volatile
         private var INSTANSE: StocksDatabase? = null
         fun getInstance(context: Context): StocksDatabase {
-            Log.e("get_instanse", "1")
+
             synchronized(this) {
-                Log.e("get_instanse", "2")
                 var instance = INSTANSE
                 if (instance == null) {
                     instance = Room.databaseBuilder(
@@ -29,10 +28,10 @@ abstract class StocksDatabase : RoomDatabase() {
                     )
                         .fallbackToDestructiveMigration()
                         .build()
-                    Log.e("get_instanse", "3")
+
                     INSTANSE = instance
                 }
-                Log.e("get_instanse", "4")
+                Log.e("StocksDatabase", "return")
                 return instance
             }
         }

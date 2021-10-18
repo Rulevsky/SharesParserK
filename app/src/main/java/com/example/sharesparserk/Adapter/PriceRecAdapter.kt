@@ -1,61 +1,23 @@
-package com.example.sharesparserk.Adapter
-
-import android.content.Context
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
-import com.example.sharesparserk.PricesActivity
 import com.example.sharesparserk.R
-import com.example.sharesparserk.database.SettingsDatabase
-import com.example.sharesparserk.database.SettingsForStocks
 import com.example.sharesparserk.model.OneStockPosition
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
-
-class PriceRecAdapter(private val dataSet: MutableList<OneStockPosition>): RecyclerView.Adapter<PriceRecAdapter.ViewHolder>() {
+class PriceRecAdapter(private val dataSet: MutableList<OneStockPosition>):
+    RecyclerView.Adapter<PriceRecAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
         val acronymTextView: TextView
+        val stockIdTextView: TextView
         val currentPriceTextView: TextView
-        val lowPriceEditText: EditText
-        val highPriceEditText: EditText
+
         init {
             acronymTextView = view.findViewById(R.id.acronymTextView)
+            stockIdTextView = view.findViewById(R.id.stockIdTextView)
             currentPriceTextView = view.findViewById(R.id.currentPriceTextView)
-            lowPriceEditText = view.findViewById(R.id.lowPriceEditText)
-            highPriceEditText = view.findViewById(R.id.highPriceEditText)
-
-            lowPriceEditText.addTextChangedListener(object : TextWatcher{
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                    Log.e("before text changed", "TODO(\"Not yet implemented\")")
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                }
-
-                override fun afterTextChanged(s: Editable?) {
-                    view
-                    GlobalScope.launch(Dispatchers.IO) {
-
-                    }
-                }
-            })
         }
     }
 
@@ -68,11 +30,11 @@ class PriceRecAdapter(private val dataSet: MutableList<OneStockPosition>): Recyc
     override fun onBindViewHolder(holder: PriceRecAdapter.ViewHolder, position: Int) {
         holder.acronymTextView.text = dataSet.get(position).acronym
         holder.currentPriceTextView.text = dataSet.get(position).currentPrice.toString()
+        holder.stockIdTextView.text = dataSet.get(position).stockId.toString()
 
     }
 
     override fun getItemCount() = dataSet.size
-
 
 
 }

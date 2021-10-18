@@ -11,3 +11,4 @@ interface RetrofitServices {
     fun getSharesList(): Call<AllStocks>
 
 }
+
