@@ -1,5 +1,6 @@
 package com.example.sharesparserk.SettingsAct
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,12 @@ class SettingRecViewAdapter(private var settingsDatabaseDao: MutableList<Setting
         holder.lowPriceSetTextView.text = settingsDatabaseDao.get(position)?.lowPrice.toString()
         holder.highPriceSetTextView.text = settingsDatabaseDao.get(position)?.highPrice.toString()
 
+        holder.itemView.setOnClickListener{ onItemClicked(position)}
+
+    }
+
+    private fun onItemClicked(position: Int) {
+        Log.e("try onclick", position.toString())
     }
 
     override fun getItemCount() = 32

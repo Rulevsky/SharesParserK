@@ -39,25 +39,25 @@ class PriceCheckService : Service() {
 
     override fun onBind(intent: Intent): IBinder {
         TODO("Return the communication channel to the service.")
-        Log.e("tag", "onbind")
+        Log.e("PriceCheckService", "onbind")
     }
 
     override fun onCreate() {
         super.onCreate()
-        Log.e("tag", "servis sozdan")
+        Log.e("PriceCheckService", "servis sozdan")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
+        powerManagment()
         isRunning = true
         GlobalScope.launch(Dispatchers.IO) {
             repeat(100_000) {
                 delay(10000L)
-                Log.e("tag", " global scope coroutine")
+                Log.e("PriceCheckService", " global scope coroutine")
                 try {
                     fetchData()
                 } catch (e: Exception) {
-                    Log.e("tag","fetchdata exception: " + e.toString())
+                    Log.e("PriceCheckService","fetchdata exception: " + e.toString())
                 }
             }
         }
@@ -128,7 +128,7 @@ class PriceCheckService : Service() {
 
 
     suspend fun fetchData() {
-        Log.e("tag", "fetchdata started")
+        Log.e("PriceCheckService", "fetchdata started")
         var mService: RetrofitServices = Common.retrofitService
         var dataSet: MutableList<OneStockPosition> = mutableListOf()
         mService.getSharesList().enqueue(object : Callback<AllStocks> {
@@ -137,7 +137,6 @@ class PriceCheckService : Service() {
                 response: Response<AllStocks>
             ) {
                 var stocksData = response.body()!!
-                Log.e("tag", "responsebody zapisalsa: " + stocksData.stocks.x1.toString())
                 dataSet =
                     mutableListOf(
                         stocksData.stocks.x1, stocksData.stocks.x2, stocksData.stocks.x3,
@@ -175,13 +174,13 @@ class PriceCheckService : Service() {
                                 )
                             }
                         }
-                        Log.e("tag", "while:" + i.toString())
+
                         i++
 
                        }
 
                     }
-                    Log.e("tag", "while ended")
+                    Log.e("PriceCheckService", "fetch and check done")
                 }
             }
 
@@ -192,13 +191,16 @@ class PriceCheckService : Service() {
 
 
     }
-    // <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    // <uses-permission android:name="android.permission.WAKE_LOCK" />
     //dont work
-    @SuppressLint("InvalidWakeLockTag")
+
     fun powerManagment(){
-        var mgr: PowerManager = applicationContext.getSystemService(Context.POWER_SERVICE) as PowerManager
-        var wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "mywakelock")
-        wakeLock.acquire();
+     val wakeLock: PowerManager.WakeLock =
+         (getSystemService(Context.POWER_SERVICE) as PowerManager).run{
+            newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SharesParserK::MyWakeLogTag").apply {
+                acquire()
+            }
+        }
     }
 
 }
