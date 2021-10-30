@@ -105,26 +105,6 @@ class PriceCheckService : Service() {
         }
     }
 
-//    fun checkIfSell() {
-//
-//        var mService: RetrofitServices = Common.retrofitService
-//        mService.getSharesList().enqueue(object : Callback<AllStocks> {
-//            override fun onResponse(
-//                call: Call<AllStocks>,
-//                response: Response<AllStocks>
-//            ) {
-//                var allStocks = response.body()!!
-//                Log.e("tag", "retrofit in service ok")
-//                Log.e("tag", allStocks.stocks.x16.currentPrice.toString())
-//
-//            }
-//
-//            override fun onFailure(call: Call<AllStocks>, t: Throwable) {
-//                Log.e("tag", "failure: " + t.toString())
-//            }
-//        })
-//    }
-
 
 
     suspend fun fetchData() {
