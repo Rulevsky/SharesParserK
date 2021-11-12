@@ -12,6 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import com.example.sharesparserk.Common.Common
 import com.example.sharesparserk.Interface.RetrofitServices
 import com.example.sharesparserk.SettingsAct.SettingsActivity
+import com.example.sharesparserk.StocksViewModel.StockSettings
+import com.example.sharesparserk.StocksViewModel.StocksActivity
 
 
 import com.example.sharesparserk.database.SettingsDatabase
@@ -21,9 +23,7 @@ import com.example.sharesparserk.database.StocksDatabase
 import com.example.sharesparserk.model.AllStocks
 import com.example.sharesparserk.model.OneStockPosition
 import com.example.sharesparserk.model.Stocks
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,8 +31,10 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     lateinit var mService: RetrofitServices
+
     //lateinit var dialog: AlertDialog
     var dataset: MutableList<OneStockPosition> = mutableListOf()
+    val applicationScope = CoroutineScope(SupervisorJob())
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +45,11 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, serviceClass)
         startService(intent)
 
+
+        // callback settings db population
+        //var settingsDatabaseDao = SettingsDatabase.getInstance(applicationContext, applicationScope).settingsDatabaseDao
+
+
     }
 
 
@@ -51,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private suspend fun insertSettings(){
+    private suspend fun insertSettings() {
 ////        var set = SettingsForStocks(1, "ABC", 2.11, 999.11)
 //        var settingsDatabase = SettingsDatabase.getInstance(this).settingsDatabaseDao
 //        if (settingsDatabase.get(1) == null){
@@ -72,8 +79,15 @@ class MainActivity : AppCompatActivity() {
         var stocksDatabase = StocksDatabase.getInstance(this).stocksDatabaseDao
         stocksDatabase.clear()
         var i = 0
-        while (i < dataset.size){
-            stocksDatabase.insert(Stock(dataset.get(i).stockId, dataset.get(i).acronym, dataset.get(i).name, dataset.get(i).currentPrice))
+        while (i < dataset.size) {
+            stocksDatabase.insert(
+                Stock(
+                    dataset.get(i).stockId,
+                    dataset.get(i).acronym,
+                    dataset.get(i).name,
+                    dataset.get(i).currentPrice
+                )
+            )
             Log.e("iterator", i.toString())
             Log.e("size", dataset.size.toString())
             i++
@@ -81,6 +95,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun isRunningBtn(view: android.view.View) {
+        var intent = Intent(this, StocksActivity::class.java)
+        startActivity(intent)
 
     }
 

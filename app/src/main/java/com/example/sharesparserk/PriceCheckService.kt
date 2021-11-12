@@ -36,6 +36,8 @@ class PriceCheckService : Service() {
     var CHANNEL_ID = "price_notf_channed_id"
     var NOTIFICATION_ID = 101
 
+    val applicationScope = CoroutineScope(SupervisorJob())
+
 
     override fun onBind(intent: Intent): IBinder {
         TODO("Return the communication channel to the service.")
@@ -50,7 +52,8 @@ class PriceCheckService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         powerManagment()
         isRunning = true
-        GlobalScope.launch(Dispatchers.IO) {
+        //Was global scope, memory leak.
+        CoroutineScope(SupervisorJob()).launch(Dispatchers.IO) {
             repeat(100_000) {
                 delay(10000L)
                 Log.e("PriceCheckService", " global scope coroutine")
@@ -134,7 +137,7 @@ class PriceCheckService : Service() {
                 val stocksDatabase =
                     StocksDatabase.getInstance(applicationContext).stocksDatabaseDao
                 val settingsDatabase =
-                    SettingsDatabase.getInstance(applicationContext).settingsDatabaseDao
+                    SettingsDatabase.getInstance(applicationContext, applicationScope).settingsDatabaseDao()
                 GlobalScope.launch(Dispatchers.IO) {
                 var i: Int = 1
                 while (i <= 32) {

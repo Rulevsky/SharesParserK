@@ -13,20 +13,6 @@ class SettingRecViewAdapter(private var settingsDatabaseDao: MutableList<Setting
     RecyclerView.Adapter<SettingRecViewAdapter.ViewHolder>(){
 
 
-
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val idSetTextView: TextView
-        val lowPriceSetTextView: TextView
-        val highPriceSetTextView: TextView
-        init{
-            idSetTextView = view.findViewById(R.id.idSetTextView)
-            lowPriceSetTextView = view.findViewById(R.id.lowPriceSetTextView)
-            highPriceSetTextView = view.findViewById(R.id.highPriceSetTextView)
-        }
-
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.settings_holder, parent, false)
@@ -41,6 +27,20 @@ class SettingRecViewAdapter(private var settingsDatabaseDao: MutableList<Setting
         holder.itemView.setOnClickListener{ onItemClicked(position)}
 
     }
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val idSetTextView: TextView
+        val lowPriceSetTextView: TextView
+        val highPriceSetTextView: TextView
+        init{
+            idSetTextView = view.findViewById(R.id.idSetTextView)
+            lowPriceSetTextView = view.findViewById(R.id.lowPriceSetTextView)
+            highPriceSetTextView = view.findViewById(R.id.highPriceSetTextView)
+        }
+
+    }
+
+
 
     private fun onItemClicked(position: Int) {
         Log.e("try onclick", position.toString())

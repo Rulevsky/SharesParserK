@@ -10,26 +10,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sharesparserk.R
 import com.example.sharesparserk.database.SettingsDatabase
 import com.example.sharesparserk.database.SettingsForStocks
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class SettingsActivity : AppCompatActivity() {
     lateinit var recyclerView: RecyclerView
     lateinit var stockIdEditText: EditText
     lateinit var lowPriceEditText: EditText
     lateinit var highPriceEditText: EditText
+    val applicationScope = CoroutineScope(SupervisorJob())
 //    var settingsDatabaseDao: SettingsDatabaseDao? = null
     var dataset: MutableList<SettingsForStocks> = mutableListOf()
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        initOrUpdateDb()
+//        initOrUpdateDb()
         stockIdEditText = findViewById<EditText>(R.id.stockIdEditText)
         lowPriceEditText = findViewById<EditText>(R.id.lowPriceEditText)
         highPriceEditText = findViewById<EditText>(R.id.highPriceEditText)
         lifecycleScope.launch(Dispatchers.IO) {
-           var settingsDatabaseDao = SettingsDatabase.getInstance(applicationContext).settingsDatabaseDao
+           var settingsDatabaseDao = SettingsDatabase.getInstance(applicationContext, applicationScope).settingsDatabaseDao()
            var i:Int = 1
             while (i <= 32){
                 settingsDatabaseDao.get(i)?.let { dataset.add(it) }
@@ -46,30 +48,30 @@ class SettingsActivity : AppCompatActivity() {
 
 
     suspend fun getDB() {
-        var db = SettingsDatabase.getInstance(applicationContext).settingsDatabaseDao
+        var db = SettingsDatabase.getInstance(applicationContext, applicationScope).settingsDatabaseDao()
         var settingsForStocks: SettingsForStocks? = db.get(1)
 
     }
 
 
-    fun initOrUpdateDb() {
-        //db start from 1(not from 0)
-        var db = SettingsDatabase.getInstance(applicationContext).settingsDatabaseDao
-        GlobalScope.launch(Dispatchers.IO) {
-            var i: Int = 1
-            while (i <= 32) {
-                if (db.get(i)?.settingsID == null) {
-                    db.insert(SettingsForStocks(i, 1.11, 999.99))
-                    Log.e("settings activity db inserted", i.toString())
-                }
-                i++
-            }
-        }
-    }
+//    fun initOrUpdateDb() {
+//        //db start from 1(not from 0)
+//        var db = SettingsDatabase.getInstance(applicationContext).settingsDatabaseDao
+//        GlobalScope.launch(Dispatchers.IO) {
+//            var i: Int = 1
+//            while (i <= 32) {
+//                if (db.get(i)?.settingsID == null) {
+//                    db.insert(SettingsForStocks(i, 1.11, 999.99))
+//                    Log.e("settings activity db inserted", i.toString())
+//                }
+//                i++
+//            }
+//        }
+//    }
 
     fun updateDb(setId: Int, lowPrice: Double, highPrice: Double){
         GlobalScope.launch(Dispatchers.IO){
-            var settingsDatabase = SettingsDatabase.getInstance(applicationContext).settingsDatabaseDao
+            var settingsDatabase = SettingsDatabase.getInstance(applicationContext, applicationScope).settingsDatabaseDao()
             settingsDatabase.update(SettingsForStocks(setId, lowPrice, highPrice))
         }
     }

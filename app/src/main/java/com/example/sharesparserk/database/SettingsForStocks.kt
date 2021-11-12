@@ -5,11 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "settings_table")
-data class SettingsForStocks (
+class SettingsForStocks (
     @PrimaryKey(autoGenerate = false)
     var settingsID: Int,
-//    @ColumnInfo( name = "acronym")
-//    var acronym: String,
     @ColumnInfo(name = "Low price")
     var lowPrice: Double,
     @ColumnInfo(name = "High price")
