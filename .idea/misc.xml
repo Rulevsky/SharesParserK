@@ -7,12 +7,14 @@
         <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/drawable/textlines.xml" value="0.1" />
         <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/activity_prices.xml" value="0.16" />
+        <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/activity_setting.xml" value="0.2" />
         <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/activity_settings.xml" value="0.536" />
         <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/activity_stock_settings.xml" value="0.4" />
         <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/activity_stocks.xml" value="0.2" />
         <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/one_share_holder.xml" value="0.4" />
         <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/settings_holder.xml" value="0.536" />
         <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/stocks_fragment.xml" value="0.4" />
+        <entry key="..\:/Users/rulevsky/AndroidStudioProjects/SharesParserK/app/src/main/res/layout/stocks_settings_holder.xml" value="0.8" />
       </map>
     </option>
   </component>

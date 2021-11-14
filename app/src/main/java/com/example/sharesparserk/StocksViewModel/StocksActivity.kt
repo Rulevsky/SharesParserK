@@ -20,13 +20,16 @@ class StocksActivity : AppCompatActivity() {
         setContentView(R.layout.activity_stocks)
 
         val recyclerView = findViewById<RecyclerView>(R.id.newRecView)
-        val adapter = SettingsListAdapter()
+        val adapter = StocksSettingsAdapter()
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        settingsViewModel.allSettingsRepository.observe(this, Observer { settings ->
-            settings?.let { adapter.submitList(it)}
+
+
+        settingsViewModel.allStocksSettingsRepository.observe(this, Observer { stocksSettings ->
+            stocksSettings?.let { adapter.submitList(it)}
         })
+
 
 
     }

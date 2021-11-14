@@ -14,17 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SharesParserK">
         <activity
-            android:name=".StocksViewModel.StockSettings"
+            android:name=".StocksViewModel.StockSettingActivity"
             android:exported="false" />
         <activity
             android:name=".StocksViewModel.StocksActivity"
             android:exported="false" />
-        <activity
-            android:name=".SettingsAct.SettingsActivity"
-            android:exported="true" />
-        <activity
-            android:name=".PricesActivity"
-            android:exported="true" />
 
         <service
             android:name=".PriceCheckService"

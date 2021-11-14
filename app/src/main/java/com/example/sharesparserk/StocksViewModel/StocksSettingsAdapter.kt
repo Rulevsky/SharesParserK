@@ -3,22 +3,20 @@ package com.example.sharesparserk.StocksViewModel
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Intent
-import android.text.Layout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharesparserk.R
-import com.example.sharesparserk.database.SettingsForStocks
+import com.example.sharesparserk.database1.StocksSettings
 
-class SettingsListAdapter :
-    ListAdapter<SettingsForStocks, SettingsListAdapter.SettingsViewHolder>(SettingsComparator()) {
+class StocksSettingsAdapter :
+    ListAdapter<StocksSettings, StocksSettingsAdapter.SettingsViewHolder>(StocksSettingsComparator()) {
     var application = Application()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SettingsViewHolder {
@@ -31,12 +29,16 @@ class SettingsListAdapter :
         holder.idSetTextView.text = current.settingsID.toString()
         holder.lowPriceSetTextView.text = current.lowPrice.toString()
         holder.highPriceSetTextView.text = current.highPrice.toString()
+        holder.acronymTextView.text = current.acronym
+        holder.currentPriceTextView.text = current.currentPrice.toString() // + application.getString(R.string.dollar_sign)
 
         holder.itemView.setOnClickListener{
             view -> position
-            var thisSettingsId: Int = position + 1
-            var intent: Intent = Intent(view.context, StockSettings::class.java)
+            val thisSettingsId: Int = position + 1
+            val thisAcronym: String = current.acronym
+            var intent: Intent = Intent(view.context, StockSettingActivity::class.java)
             intent.putExtra("thisSettingsId", thisSettingsId.toString())
+            intent.putExtra("thisAcronym", thisAcronym)
 
             view.context.startActivity(intent)
             Log.e("tag", "clicked position" + position.toString())
@@ -45,14 +47,17 @@ class SettingsListAdapter :
 
 
     class SettingsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val idSetTextView: TextView = itemView.findViewById(R.id.idSetTextView)
-        val lowPriceSetTextView: TextView = itemView.findViewById(R.id.lowPriceSetTextView)
-        val highPriceSetTextView: TextView = itemView.findViewById(R.id.highPriceSetTextView)
+        val idSetTextView: TextView = itemView.findViewById(R.id.settingsIdTextView)
+        val lowPriceSetTextView: TextView = itemView.findViewById(R.id.lowPriceTextView)
+        val highPriceSetTextView: TextView = itemView.findViewById(R.id.highPriceTextView)
+        val acronymTextView: TextView = itemView.findViewById(R.id.acronymTextView)
+        val currentPriceTextView: TextView = itemView.findViewById(R.id.currentPriceTextView)
+
 
         companion object {
             fun create(parent: ViewGroup): SettingsViewHolder {
                 val view: View = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.settings_holder, parent, false)
+                    .inflate(R.layout.stocks_settings_holder, parent, false)
                 return SettingsViewHolder(view)
             }
         }
@@ -62,10 +67,10 @@ class SettingsListAdapter :
     }
 
 
-    class SettingsComparator : DiffUtil.ItemCallback<SettingsForStocks>() {
+    class StocksSettingsComparator : DiffUtil.ItemCallback<StocksSettings>() {
         override fun areItemsTheSame(
-            oldItem: SettingsForStocks,
-            newItem: SettingsForStocks
+            oldItem: StocksSettings,
+            newItem: StocksSettings
         ): Boolean {
             return oldItem.settingsID == newItem.settingsID
         }
@@ -73,8 +78,8 @@ class SettingsListAdapter :
         // check how work if work
         @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(
-            oldItem: SettingsForStocks,
-            newItem: SettingsForStocks
+            oldItem: StocksSettings,
+            newItem: StocksSettings
         ): Boolean {
             return oldItem == newItem
         }

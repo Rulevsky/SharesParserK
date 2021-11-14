@@ -1,24 +1,24 @@
 package com.example.sharesparserk.StocksViewModel
 
 import androidx.lifecycle.*
-import com.example.sharesparserk.database.SettingsForStocks
+import com.example.sharesparserk.database1.StocksSettings
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
-class SettingsViewModel(private val repository: SettingsRepository) : ViewModel() {
+class SettingsViewModel(private val repository: StocksSettingsRepository) : ViewModel() {
 
-    val allSettingsRepository: LiveData<List<SettingsForStocks>> = repository.allSettigs.asLiveData()
+    val allStocksSettingsRepository: LiveData<List<StocksSettings>> = repository.allStocksSettings.asLiveData()
 
-    fun insert(settingsForStocks: SettingsForStocks) = viewModelScope.launch {
-        repository.update(settingsForStocks)
+    fun insert(stocksSettings: StocksSettings) = viewModelScope.launch {
+        repository.update(stocksSettings)
     }
-    fun update(settingsForStocks: SettingsForStocks) = viewModelScope.launch {
-        repository.update(settingsForStocks)
+    fun update(stocksSettings: StocksSettings) = viewModelScope.launch {
+        repository.update(stocksSettings)
     }
 }
 
 
-class SettingsViewModelFactory(private val repository: SettingsRepository) : ViewModelProvider.Factory{
+class SettingsViewModelFactory(private val repository: StocksSettingsRepository) : ViewModelProvider.Factory{
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

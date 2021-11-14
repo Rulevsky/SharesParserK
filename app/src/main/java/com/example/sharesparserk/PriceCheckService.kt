@@ -1,35 +1,27 @@
 package com.example.sharesparserk
 
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
-import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sharesparserk.Common.Common
 import com.example.sharesparserk.Interface.RetrofitServices
-import com.example.sharesparserk.database.*
+import com.example.sharesparserk.database1.SSDatabase
+import com.example.sharesparserk.database1.StocksSettings
 import com.example.sharesparserk.model.AllStocks
 import com.example.sharesparserk.model.OneStockPosition
-import com.example.sharesparserk.model.Stocks
 import kotlinx.coroutines.*
-import kotlinx.coroutines.android.awaitFrame
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Runnable
-
-import java.util.*
 
 class PriceCheckService : Service() {
     var isRunning:Boolean = false
@@ -134,16 +126,33 @@ class PriceCheckService : Service() {
                         stocksData.stocks.x28, stocksData.stocks.x29, stocksData.stocks.x30,
                         stocksData.stocks.x31, stocksData.stocks.x32
                     )
-                val stocksDatabase =
-                    StocksDatabase.getInstance(applicationContext).stocksDatabaseDao
-                val settingsDatabase =
-                    SettingsDatabase.getInstance(applicationContext, applicationScope).settingsDatabaseDao()
+
+                val stocksSettingsDatabase =
+                    SSDatabase.getInstance(applicationContext, applicationScope).ssDatabaseDao()
+
+                CoroutineScope(SupervisorJob()).launch(Dispatchers.IO) {
+                    var i: Int = 0
+                    while (i <= 31) {
+                        var currentStockSetting: StocksSettings? = stocksSettingsDatabase.get(i+1)
+                        currentStockSetting = StocksSettings(
+                            currentStockSetting!!.settingsID,
+                            currentStockSetting.lowPrice,
+                            currentStockSetting.highPrice,
+                            dataSet[i].acronym,
+                            dataSet[i].currentPrice
+                        )
+                        stocksSettingsDatabase.update(currentStockSetting)
+                        i++
+                    }
+                }
+
+                // use CoroutineScope(SupervisorJob()) if memory leak
                 GlobalScope.launch(Dispatchers.IO) {
                 var i: Int = 1
                 while (i <= 32) {
-                    var currentPrice = stocksDatabase.get(i)?.currentPrice
+                    var currentPrice = stocksSettingsDatabase.get(i)?.currentPrice
                     if (currentPrice != null) {
-                        if (currentPrice < settingsDatabase.get(i)!!.lowPrice || currentPrice > settingsDatabase.get(
+                        if (currentPrice < stocksSettingsDatabase.get(i)!!.lowPrice || currentPrice > stocksSettingsDatabase.get(
                                 i
                             )!!.highPrice
                         ) {
@@ -153,7 +162,7 @@ class PriceCheckService : Service() {
                                 notify(NOTIFICATION_ID, builder.build())
                                 Log.e(
                                     "price check service",
-                                    "PRICE NOTIFICATION!!!:" + stocksDatabase.get(i)?.acronym
+                                    "PRICE NOTIFICATION!!!:" + stocksSettingsDatabase.get(i)?.acronym
                                 )
                             }
                         }
