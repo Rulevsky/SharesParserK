@@ -18,8 +18,5 @@ class StocksSettingsRepository (
         suspend fun update(stocksSettings: StocksSettings){
             ssDatabaseDao.update(stocksSettings)
         }
-//        @WorkerThread
-//        suspend fun get(key: Int): StocksSettings? {
-//           return ssDatabaseDao.get(key)
-//        }
+
 }

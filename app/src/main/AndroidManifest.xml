@@ -14,7 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SharesParserK">
         <activity
-            android:name=".StocksViewModel.StockSettingActivity"
+            android:name="com.example.sharesparserk.AppSettingsActivity.AppSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SetPricesForNotificationActivity.SetPricesForNotificationActivity"
             android:exported="false" />
         <activity
             android:name=".StocksViewModel.StocksActivity"

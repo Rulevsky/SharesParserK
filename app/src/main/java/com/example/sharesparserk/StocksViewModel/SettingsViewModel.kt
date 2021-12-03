@@ -3,7 +3,7 @@ package com.example.sharesparserk.StocksViewModel
 import androidx.lifecycle.*
 import com.example.sharesparserk.database1.StocksSettings
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
+
 
 class SettingsViewModel(private val repository: StocksSettingsRepository) : ViewModel() {
 

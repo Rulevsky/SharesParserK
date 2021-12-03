@@ -3,9 +3,9 @@ package com.example.sharesparserk.database1
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+
 @Entity(tableName = "stocks_settings_table")
 class StocksSettings(
-
     @PrimaryKey(autoGenerate = false)
     var settingsID: Int,
     @ColumnInfo(name = "Low price")
@@ -15,10 +15,7 @@ class StocksSettings(
     @ColumnInfo(name = "Acronym")
     var acronym: String,
     @ColumnInfo(name = "Current Price")
-    var currentPrice: Double,
-
-
-
+    var currentPrice: Double
 )
 {
 }

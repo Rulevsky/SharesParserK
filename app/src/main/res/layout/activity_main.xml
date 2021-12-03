@@ -7,14 +7,24 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/isRunningBtn"
+        android:id="@+id/listBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:onClick="isRunningBtn"
-        android:text="Button"
+        android:text="List"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/appSettingsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Settings"
+        app:layout_constraintBottom_toTopOf="@+id/listBtn"
+        app:layout_constraintEnd_toEndOf="@+id/listBtn"
+        app:layout_constraintStart_toStartOf="@+id/listBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

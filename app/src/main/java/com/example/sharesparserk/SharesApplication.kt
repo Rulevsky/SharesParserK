@@ -12,4 +12,6 @@ class SharesApplication : Application() {
     val stocksSettingsDatabase by lazy { SSDatabase.getInstance(this, applicationScope)}
     val repository by lazy { StocksSettingsRepository(stocksSettingsDatabase.ssDatabaseDao()) }
 
+
+
 }

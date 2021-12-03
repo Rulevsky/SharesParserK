@@ -24,13 +24,8 @@ class StocksActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-
-
         settingsViewModel.allStocksSettingsRepository.observe(this, Observer { stocksSettings ->
             stocksSettings?.let { adapter.submitList(it)}
         })
-
-
-
     }
 }

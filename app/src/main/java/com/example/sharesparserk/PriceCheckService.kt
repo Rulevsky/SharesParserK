@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.sharesparserk.Common.Common
@@ -24,12 +25,12 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class PriceCheckService : Service() {
-    var isRunning:Boolean = false
+    var isRunning: Boolean = false
     var CHANNEL_ID = "price_notf_channed_id"
     var NOTIFICATION_ID = 101
-
     val applicationScope = CoroutineScope(SupervisorJob())
-
+    val APP_PREFERENCES_KEY = "apikey"
+    var key:String? = null
 
     override fun onBind(intent: Intent): IBinder {
         TODO("Return the communication channel to the service.")
@@ -38,24 +39,35 @@ class PriceCheckService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        //key = getApiKey()
+        key = "uzmYj2niVZCDwZZZ"
         Log.e("PriceCheckService", "servis sozdan")
     }
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         powerManagment()
         isRunning = true
         //Was global scope, memory leak.
-        CoroutineScope(SupervisorJob()).launch(Dispatchers.IO) {
-            repeat(100_000) {
-                delay(10000L)
-                Log.e("PriceCheckService", " global scope coroutine")
-                try {
-                    fetchData()
-                } catch (e: Exception) {
-                    Log.e("PriceCheckService","fetchdata exception: " + e.toString())
+
+            CoroutineScope(SupervisorJob()).launch(Dispatchers.IO) {
+                repeat(100_000) {
+                    delay(10000L)
+                    try {
+
+                        if (key?.length!! < 16) {
+
+                            Toast.makeText(applicationContext, "Enter api key", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            fetchData()
+                        }
+
+                    } catch (e: Exception) {
+                        Log.e("PriceCheckService", "fetchdata exception: " + e.toString())
+                    }
                 }
             }
-        }
 
 
         return super.onStartCommand(intent, flags, startId)
@@ -63,23 +75,25 @@ class PriceCheckService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        createNotificationChannel()
-        var builder = notification()
-        with(NotificationManagerCompat.from(applicationContext)) {
-            notify(NOTIFICATION_ID, builder.build())
-        }
+//        createNotificationChannel()
+//        var builder = notification()
+//        with(NotificationManagerCompat.from(applicationContext)) {
+//            notify(NOTIFICATION_ID, builder.build())
+//        }
         isRunning = false
 
     }
 
 
-    fun notification(): NotificationCompat.Builder {
-
+    fun notification(
+        acronym: String,
+        currentPrice: String
+    ): NotificationCompat.Builder {
 
         var builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_message)
-            .setContentTitle("Content Title")
-            .setContentText("Content Text")
+            .setContentTitle(acronym)
+            .setContentText("Current price: " + currentPrice)
             .setStyle(NotificationCompat.BigTextStyle())
             .setPriority(NotificationCompat.PRIORITY_HIGH)
         return builder
@@ -101,18 +115,25 @@ class PriceCheckService : Service() {
     }
 
 
-
     suspend fun fetchData() {
-        Log.e("PriceCheckService", "fetchdata started")
+        Log.e("PriceCheckService", "fetching started")
+
+        val key: String = "uzmYj2niVZCDwZZZ"
+        val selections: String = "stocks"
+
+
         var mService: RetrofitServices = Common.retrofitService
-        var dataSet: MutableList<OneStockPosition> = mutableListOf()
-        mService.getSharesList().enqueue(object : Callback<AllStocks> {
+        var fletchedData: MutableList<OneStockPosition> = mutableListOf()
+
+
+        mService.getSharesList(selections, key!!).enqueue(object : Callback<AllStocks> {
             override fun onResponse(
                 call: Call<AllStocks>,
                 response: Response<AllStocks>
             ) {
+                //fix if key false (surr in try?)
                 var stocksData = response.body()!!
-                dataSet =
+                fletchedData =
                     mutableListOf(
                         stocksData.stocks.x1, stocksData.stocks.x2, stocksData.stocks.x3,
                         stocksData.stocks.x4, stocksData.stocks.x5, stocksData.stocks.x6,
@@ -133,44 +154,44 @@ class PriceCheckService : Service() {
                 CoroutineScope(SupervisorJob()).launch(Dispatchers.IO) {
                     var i: Int = 0
                     while (i <= 31) {
-                        var currentStockSetting: StocksSettings? = stocksSettingsDatabase.get(i+1)
-                        currentStockSetting = StocksSettings(
-                            currentStockSetting!!.settingsID,
-                            currentStockSetting.lowPrice,
-                            currentStockSetting.highPrice,
-                            dataSet[i].acronym,
-                            dataSet[i].currentPrice
+                        var existedStockSetting: StocksSettings? = stocksSettingsDatabase.get(i + 1)
+                        existedStockSetting = StocksSettings(
+                            existedStockSetting!!.settingsID,
+                            existedStockSetting.lowPrice,
+                            existedStockSetting.highPrice,
+                            fletchedData[i].acronym,
+                            fletchedData[i].currentPrice
                         )
-                        stocksSettingsDatabase.update(currentStockSetting)
+                        stocksSettingsDatabase.update(existedStockSetting)
                         i++
                     }
                 }
 
                 // use CoroutineScope(SupervisorJob()) if memory leak
                 GlobalScope.launch(Dispatchers.IO) {
-                var i: Int = 1
-                while (i <= 32) {
-                    var currentPrice = stocksSettingsDatabase.get(i)?.currentPrice
-                    if (currentPrice != null) {
-                        if (currentPrice < stocksSettingsDatabase.get(i)!!.lowPrice || currentPrice > stocksSettingsDatabase.get(
-                                i
-                            )!!.highPrice
-                        ) {
-                            createNotificationChannel()
-                            var builder = notification()
-                            with(NotificationManagerCompat.from(applicationContext)) {
-                                notify(NOTIFICATION_ID, builder.build())
-                                Log.e(
-                                    "price check service",
-                                    "PRICE NOTIFICATION!!!:" + stocksSettingsDatabase.get(i)?.acronym
+                    var i: Int = 1
+                    while (i <= 32) {
+                        var currentPrice = stocksSettingsDatabase.get(i)?.currentPrice
+                        if (currentPrice != null) {
+                            if (currentPrice < stocksSettingsDatabase.get(i)!!.lowPrice || currentPrice > stocksSettingsDatabase.get(
+                                    i
+                                )!!.highPrice
+                            ) {
+                                createNotificationChannel()
+                                var builder = notification(
+                                    stocksSettingsDatabase.get(i)!!.acronym,
+                                    stocksSettingsDatabase.get(i)!!.currentPrice.toString()
                                 )
+                                with(NotificationManagerCompat.from(applicationContext)) {
+                                    notify(NOTIFICATION_ID, builder.build())
+                                    Log.e(
+                                        "price check service",
+                                        "PRICE NOTIFICATION!!!:" + stocksSettingsDatabase.get(i)?.acronym
+                                    )
+                                }
                             }
+                            i++
                         }
-
-                        i++
-
-                       }
-
                     }
                     Log.e("PriceCheckService", "fetch and check done")
                 }
@@ -180,20 +201,27 @@ class PriceCheckService : Service() {
                 Log.e("tag", "failure: " + t.toString())
             }
         })
-
-
     }
-    // <uses-permission android:name="android.permission.WAKE_LOCK" />
-    //dont work
 
-    fun powerManagment(){
-     val wakeLock: PowerManager.WakeLock =
-         (getSystemService(Context.POWER_SERVICE) as PowerManager).run{
-            newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SharesParserK::MyWakeLogTag").apply {
-                acquire()
+    // send requests up to 180+ secs after phone sleep
+    // check if service work when app is close
+    // repair requests frequency
+    fun powerManagment() {
+        val wakeLock: PowerManager.WakeLock =
+            (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SharesParserK::MyWakeLogTag").apply {
+                    acquire()
+                }
             }
-        }
     }
+
+    fun getApiKey():String {
+        var appSettings = getSharedPreferences(APP_PREFERENCES_KEY, MODE_PRIVATE)
+        var keyFromSP = appSettings.getString(APP_PREFERENCES_KEY, "").toString()
+        Log.e("keycheck", keyFromSP.toString())
+        return keyFromSP
+    }
+
 
 }
 
