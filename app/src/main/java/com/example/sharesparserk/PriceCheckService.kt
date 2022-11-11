@@ -13,8 +13,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.example.sharesparserk.Common.Common
-import com.example.sharesparserk.Interface.RetrofitServices
+import com.example.sharesparserk.retrofit.Common.Common
+import com.example.sharesparserk.retrofit.Interface.RetrofitServices
 import com.example.sharesparserk.database1.SSDatabase
 import com.example.sharesparserk.database1.StocksSettings
 import com.example.sharesparserk.model.AllStocks
@@ -40,7 +40,7 @@ class PriceCheckService : Service() {
     override fun onCreate() {
         super.onCreate()
         //key = getApiKey()
-        key = "uzmYj2niVZCDwZZZ"
+        key = "XLeZozdhkemWL4hl"
         Log.e("PriceCheckService", "servis sozdan")
     }
 
@@ -48,15 +48,11 @@ class PriceCheckService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         powerManagment()
         isRunning = true
-        //Was global scope, memory leak.
-
             CoroutineScope(SupervisorJob()).launch(Dispatchers.IO) {
                 repeat(100_000) {
                     delay(10000L)
                     try {
-
                         if (key?.length!! < 16) {
-
                             Toast.makeText(applicationContext, "Enter api key", Toast.LENGTH_SHORT)
                                 .show()
                         } else {
@@ -68,8 +64,6 @@ class PriceCheckService : Service() {
                     }
                 }
             }
-
-
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -117,13 +111,13 @@ class PriceCheckService : Service() {
 
     suspend fun fetchData() {
         Log.e("PriceCheckService", "fetching started")
-
-        val key: String = "uzmYj2niVZCDwZZZ"
+        var stocksData : MutableList<OneStockPosition> = mutableListOf()
+        val key: String = "XLeZozdhkemWL4hl"
         val selections: String = "stocks"
 
 
         var mService: RetrofitServices = Common.retrofitService
-        var fletchedData: MutableList<OneStockPosition> = mutableListOf()
+        var fetchedData: MutableList<OneStockPosition> = mutableListOf()
 
 
         mService.getSharesList(selections, key!!).enqueue(object : Callback<AllStocks> {
@@ -132,22 +126,17 @@ class PriceCheckService : Service() {
                 response: Response<AllStocks>
             ) {
                 //fix if key false (surr in try?)
-                var stocksData = response.body()!!
-                fletchedData =
-                    mutableListOf(
-                        stocksData.stocks.x1, stocksData.stocks.x2, stocksData.stocks.x3,
-                        stocksData.stocks.x4, stocksData.stocks.x5, stocksData.stocks.x6,
-                        stocksData.stocks.x7, stocksData.stocks.x8, stocksData.stocks.x9,
-                        stocksData.stocks.x10, stocksData.stocks.x11, stocksData.stocks.x12,
-                        stocksData.stocks.x13, stocksData.stocks.x14, stocksData.stocks.x15,
-                        stocksData.stocks.x16, stocksData.stocks.x17, stocksData.stocks.x18,
-                        stocksData.stocks.x19, stocksData.stocks.x20, stocksData.stocks.x21,
-                        stocksData.stocks.x22, stocksData.stocks.x23, stocksData.stocks.x24,
-                        stocksData.stocks.x25, stocksData.stocks.x26, stocksData.stocks.x27,
-                        stocksData.stocks.x28, stocksData.stocks.x29, stocksData.stocks.x30,
-                        stocksData.stocks.x31, stocksData.stocks.x32
-                    )
+                var stocksData = response.body()!!.stocks
+                Log.e("FETCHED", response.body()!!.stocks.toString())
+                response.body()!!.stocks.forEach{ entry ->
+                    fetchedData.add(OneStockPosition(
+                        entry.value.acronym,
+                    entry.value.currentPrice,
+                    entry.value.name,
+                    entry.value.stockId))
+                }
 
+                // make normal function
                 val stocksSettingsDatabase =
                     SSDatabase.getInstance(applicationContext, applicationScope).ssDatabaseDao()
 
@@ -159,8 +148,8 @@ class PriceCheckService : Service() {
                             existedStockSetting!!.settingsID,
                             existedStockSetting.lowPrice,
                             existedStockSetting.highPrice,
-                            fletchedData[i].acronym,
-                            fletchedData[i].currentPrice
+                            fetchedData[i].acronym,
+                            fetchedData[i].currentPrice
                         )
                         stocksSettingsDatabase.update(existedStockSetting)
                         i++
@@ -168,6 +157,7 @@ class PriceCheckService : Service() {
                 }
 
                 // use CoroutineScope(SupervisorJob()) if memory leak
+                // make normal loop & function
                 GlobalScope.launch(Dispatchers.IO) {
                     var i: Int = 1
                     while (i <= 32) {
@@ -196,6 +186,8 @@ class PriceCheckService : Service() {
                     Log.e("PriceCheckService", "fetch and check done")
                 }
             }
+
+
 
             override fun onFailure(call: Call<AllStocks>, t: Throwable) {
                 Log.e("tag", "failure: " + t.toString())

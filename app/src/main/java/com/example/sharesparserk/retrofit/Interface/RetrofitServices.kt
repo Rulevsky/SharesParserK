@@ -1,9 +1,9 @@
-package com.example.sharesparserk.Interface
+package com.example.sharesparserk.retrofit.Interface
 
 
 import com.example.sharesparserk.PriceCheckService
 import com.example.sharesparserk.model.AllStocks
-import com.example.sharesparserk.model.Stocks
+
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.GET

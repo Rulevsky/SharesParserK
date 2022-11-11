@@ -52,7 +52,7 @@ abstract class SSDatabase : RoomDatabase() {
             suspend fun populateDatabase(ssDatabaseDao: SSDatabaseDao) {
                 var i: Int = 1
                 while (i < 33) {
-                    var stocksSettings = StocksSettings(i, 1.11, 999.9, "ACRONYM", 555.5)
+                    var stocksSettings = StocksSettings(i, 1.11, 9999.9, "ACRONYM", 555.5)
                     ssDatabaseDao.insert(stocksSettings)
                     Log.e("settdb", "start polulate" + i.toString())
                     i++

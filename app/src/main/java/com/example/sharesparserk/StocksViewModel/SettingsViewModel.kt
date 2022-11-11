@@ -26,5 +26,4 @@ class SettingsViewModelFactory(private val repository: StocksSettingsRepository)
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
-
 }

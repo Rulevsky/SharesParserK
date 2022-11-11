@@ -1,11 +1,11 @@
-package com.example.sharesparserk.Common
+package com.example.sharesparserk.retrofit.Common
 
 
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import com.example.sharesparserk.Interface.RetrofitServices
+import com.example.sharesparserk.retrofit.Interface.RetrofitServices
 import com.example.sharesparserk.retrofit.RetrofitClient
 import java.util.*
 

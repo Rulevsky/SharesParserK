@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import com.example.sharesparserk.Interface.RetrofitServices
+import com.example.sharesparserk.retrofit.Interface.RetrofitServices
 
 import com.example.sharesparserk.StocksViewModel.StocksActivity
 
@@ -23,8 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     var dataset: MutableList<OneStockPosition> = mutableListOf()
     val applicationScope = CoroutineScope(SupervisorJob())
-
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
